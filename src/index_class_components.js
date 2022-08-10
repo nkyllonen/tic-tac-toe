@@ -2,6 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
+/*
+  THIS IMPLEMENTATION USES CLASS COMPONENTS
+    - does not check for a winner
+    - alternates between 'X' and 'O' - starting with 'X'
+    - `Board` maintains game state
+    - `Square` is a controlled component
+*/
+
 class Square extends React.Component {
   // Square is a "controlled component" since they only do as they're told- mindless, stateless
   render() {
