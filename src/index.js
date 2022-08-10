@@ -2,19 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-class Square extends React.Component {
-  // Square is a "controlled component" since they only do as they're told- mindless, stateless
-  render() {
-    return (
-      // button will be re-rendered when clicked
-      <button
-        className="square"
-        onClick={() => this.props.onClick()}
-      >
-        {this.props.value}
-      </button>
-    );
-  }
+/*
+  THIS IMPLEMENTATION USES FUNCTION COMPONENTS
+    - determines winner correctly
+*/
+
+function Square(props) {
+  // no need to maintain its own state, only needs to render --> make it a function!
+  return (
+    <button className='square' onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
 }
 
 class Board extends React.Component {
@@ -32,10 +31,13 @@ class Board extends React.Component {
   handleClick(i) {
     // `.slice()`: make a copy of the `squares` array
     const squares = this.state.squares.slice();
+
+    // check for a winner or for a click on an occupied index
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+
     squares[i] = this.state.currentPlayer;
-
-    // TODO: check for a winner
-
     this.setState({
       currentPlayer: this.state.currentPlayer === 'X' ? 'O' : 'X',
       squares: squares
@@ -47,12 +49,20 @@ class Board extends React.Component {
     return (
       <Square
         onClick={() => this.handleClick(i)}
+        // onClick={() => console.log(i)}
         value={this.state.squares[i]} />
     );
   }
 
   render() {
-    const status = 'Next player: ' + this.state.currentPlayer;
+    const winner = calculateWinner(this.state.squares);
+    let status;
+
+    if (winner) {
+      status = 'Winner: ' + winner;
+    } else {
+      status = 'Next player: ' + this.state.currentPlayer;
+    }
 
     return (
       <div>
@@ -90,6 +100,28 @@ class Game extends React.Component {
         </div>
       </div>
     );
+  }
+}
+
+function calculateWinner(squares) {
+  const winningLines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  // check if any of the winning lines are occupied by the same player
+  for (let i = 0; i < winningLines.length; i++) {
+    const [a, b, c] = winningLines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+    return null;
   }
 }
 
